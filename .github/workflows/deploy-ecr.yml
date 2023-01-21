@@ -12,12 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the Docker image
-        run: docker build -t $PROJECT_NAME .
+        run: docker build -t ecr-${{vars.PROJECT_NAME}} .
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ap-southeast-1
-          role-to-assume: $AWS_ROLE_ARN
+          role-to-assume: ${{secrets.AWS_ROLE_ARN}}
       - name: Amazon ECR "Login" Action for GitHub Actions
         id: login-aws-ecr
         uses: aws-actions/amazon-ecr-login@v1
