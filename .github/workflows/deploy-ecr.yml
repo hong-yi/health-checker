@@ -28,4 +28,6 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-aws-ecr.outputs.registry }}
           ECR_REPOSITORY: ecr-${{vars.PROJECT_NAME}}
-        run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        run:
+          docker tag $ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
