@@ -1,33 +1,28 @@
 name: Docker Image CI
-
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
-
+    branches:
+      - main
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run:
-        docker build -t $PROJECT_NAME .
-    - name: "Configure AWS Credentials" Action For GitHub Actions
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-region: 'ap-southeast-1'
-        role-to-assume: $AWS_ROLE_ARN
-    - name: Amazon ECR "Login" Action for GitHub Actions
-      id: login-aws-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-    - name: Push to ECR
-      env: 
-        ECR_REGISTRY: ${{ steps.login-aws-ecr.outputs.registry }}
-        ECR_REPOSITORY: ecr-$PROJECT_NAME`
-      run:
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: docker build -t $PROJECT_NAME .
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ap-southeast-1
+          role-to-assume: $AWS_ROLE_ARN
+      - name: Amazon ECR "Login" Action for GitHub Actions
+        id: login-aws-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Push to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-aws-ecr.outputs.registry }}
+          ECR_REPOSITORY: ecr-$PROJECT_NAME`
+        run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
