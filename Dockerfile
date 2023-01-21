@@ -10,4 +10,4 @@ EXPOSE 8080
 FROM alpine:latest
 COPY --from=builder /healthchecker .
 EXPOSE 8080
-CMD ["/healthcheckee"]
+CMD ["/healthchecker"]
