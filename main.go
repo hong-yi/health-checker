@@ -7,12 +7,14 @@ import (
 	"net/http"
 	"os"
 	"sph_assignment/handlers"
+	"sph_assignment/models"
 	"sph_assignment/utils"
 	"sync"
 	"time"
 )
 
 var wg sync.WaitGroup
+var urlStatusMap = map[string]models.UrlStatus{}
 
 var bucketName = os.Getenv("APP_BUCKET_NAME")
 var inputFilename = os.Getenv("APP_INPUT_FILENAME")
@@ -25,6 +27,7 @@ func main() {
 	go func() {
 		for true {
 			getApiHealthTask()
+			//testApi()
 			time.Sleep(time.Minute * 10)
 		}
 		wg.Done()
@@ -45,7 +48,10 @@ func main() {
 }
 
 func getApiHealthTask() {
+	//waitChan := make(chan struct{}, MAX_CONCURRENT_JOBS)
+	//count := 0
 	inputFile, err := utils.DownloadFileFromS3(bucketName, inputFilename)
+
 	if err != nil {
 		utils.PrintErr(fmt.Sprintf("unable to download file %v", err))
 		return
@@ -56,26 +62,40 @@ func getApiHealthTask() {
 		log.Println("error")
 	}
 	urlsMap := utils.GetUrls(urls)
-	wg.Add(len(urls))
+	wg.Add(len(urls) - 1)
+	fmt.Println(len(urls))
 
-	for url, urlStatus := range urlsMap {
+	mutex := &sync.Mutex{}
+	for _, url := range utils.GetUrlList(urlsMap) {
 		//log.Printf("%v: %v\n", url, getResponse(url.Url))
-		urlStatus := urlStatus
-		url := url
-		go func() {
+		go func(url string) {
 			defer wg.Done()
-			urlStatus.StatusCode, urlStatus.Latency = utils.GetResponse(url)
-			utils.PutStatusMetrics(url, urlStatus.StatusCode)
-			if urlStatus.StatusCode == http.StatusOK {
-				utils.PutLatencyMetrics(url, urlStatus.Latency)
+
+			//urlStatus.StatusCode, urlStatus.Latency = utils.GetResponse(url)
+			//count++
+			respCode, latency := utils.GetResponse(url)
+
+			mutex.Lock()
+			currentUrlStatus := models.UrlStatus{
+				Name:       url,
+				StatusCode: respCode,
+				Latency:    latency,
 			}
-			urlsMap[url] = urlStatus
-		}()
+			urlsMap[url] = currentUrlStatus
+			//results[url] = resp.StatusCode
+			mutex.Unlock()
+			utils.PutStatusMetrics(url, currentUrlStatus.StatusCode)
+			if currentUrlStatus.StatusCode == http.StatusOK {
+				utils.PutLatencyMetrics(url, currentUrlStatus.Latency)
+			}
+			//urlsMap[url] = urlStatus
+		}(url)
 	}
 
 	wg.Wait()
 
 	//fmt.Println(urlsMap)
+	fmt.Println("done")
 	// to json
 	resJson, err := json.Marshal(urlsMap)
 	if err != nil {

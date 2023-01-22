@@ -31,6 +31,14 @@ func GetUrls(urls [][]string) map[string]models.UrlStatus {
 	return urlList
 }
 
+func GetUrlList(urlsMap map[string]models.UrlStatus) []string {
+	urlList := []string{}
+	for k, _ := range urlsMap {
+		urlList = append(urlList, k)
+	}
+	return urlList
+}
+
 func GetAwsCredentials() aws.Config {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
