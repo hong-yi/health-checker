@@ -84,10 +84,10 @@ func getApiHealthTask() {
 			urlsMap[url] = currentUrlStatus
 			//results[url] = resp.StatusCode
 			mutex.Unlock()
-			utils.PutStatusMetrics(url, currentUrlStatus.StatusCode)
-			if currentUrlStatus.StatusCode == http.StatusOK {
-				utils.PutLatencyMetrics(url, currentUrlStatus.Latency)
-			}
+			//utils.PutStatusMetrics(url, currentUrlStatus.StatusCode)
+			//if currentUrlStatus.StatusCode == http.StatusOK {
+			//	utils.PutLatencyMetrics(url, currentUrlStatus.Latency)
+			//}
 			//urlsMap[url] = urlStatus
 		}(url)
 	}
