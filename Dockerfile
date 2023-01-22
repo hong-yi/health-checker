@@ -7,7 +7,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -o /healthchecker
 CMD ["/healthchecker"]
 EXPOSE 8080
 
-FROM alpine:latest
+FROM amazonlinux:latest
 COPY --from=builder /healthchecker .
 EXPOSE 8080
 CMD ["/healthchecker"]

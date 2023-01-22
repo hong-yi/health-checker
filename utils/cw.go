@@ -53,7 +53,7 @@ func putMetric(datum types.MetricDatum) {
 	client := cloudwatch.NewFromConfig(GetAwsCredentials())
 	_, err := client.PutMetricData(context.TODO(), &cloudwatch.PutMetricDataInput{
 		MetricData: []types.MetricDatum{datum},
-		Namespace:  aws.String("sph_test"),
+		Namespace:  aws.String("health_stats"),
 	})
 	if err != nil {
 		PrintErr(fmt.Sprintf("unable to put metric data for %v", err))
