@@ -82,6 +82,7 @@ func getApiHealthTask() {
 		log.Printf("error converting map to json: %v", err)
 	}
 	// write to s3 bucket
-	utils.UploadFileToS3(resJson, bucketName, "latest.json")
+	publicBucketName := os.Getenv("APP_PUBLIC_BUCKET_NAME")
+	utils.UploadFileToS3(resJson, publicBucketName, "latest.json")
 	//fmt.Println(string(resJson))
 }
