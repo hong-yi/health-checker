@@ -62,7 +62,7 @@ func getApiHealthTask() {
 		log.Println("error")
 	}
 	urlsMap := utils.GetUrls(urls)
-	wg.Add(len(urls) - 1)
+	wg.Add(len(urls))
 	fmt.Println(len(urls))
 
 	mutex := &sync.Mutex{}

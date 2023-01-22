@@ -71,3 +71,5 @@ we still lack the ecs service and task definition for terraform
 after testing, can see how to optimize terraform to be more modular
 should we be using the iam user and there is a way to use iam role that generates secret keys for use with github actions?
 https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
+
+change to append all putmetricdata requests into one slice then send 
