@@ -59,5 +59,5 @@ func putMetric(datum types.MetricDatum) {
 		PrintErr(fmt.Sprintf("unable to put metric data for %v", err))
 		return
 	}
-	PrintInfo(fmt.Sprintf("%v metric added!", *datum.MetricName))
+	//PrintInfo(fmt.Sprintf("%v metric added!", *datum.MetricName))
 }
