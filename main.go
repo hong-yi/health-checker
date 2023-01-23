@@ -49,8 +49,7 @@ func main() {
 }
 
 func getApiHealthTask() {
-	//waitChan := make(chan struct{}, MAX_CONCURRENT_JOBS)
-	//count := 0
+
 	latencies := []types.MetricDatum{}
 	responseCodes := []types.MetricDatum{}
 
@@ -71,12 +70,8 @@ func getApiHealthTask() {
 
 	mutex := &sync.Mutex{}
 	for _, url := range utils.GetUrlList(urlsMap) {
-		//log.Printf("%v: %v\n", url, getResponse(url.Url))
 		go func(url string) {
 			defer wg.Done()
-
-			//urlStatus.StatusCode, urlStatus.Latency = utils.GetResponse(url)
-			//count++
 			respCode, latency := utils.GetResponse(url)
 
 			mutex.Lock()
@@ -88,22 +83,15 @@ func getApiHealthTask() {
 			urlsMap[url] = currentUrlStatus
 			latencies = append(latencies, utils.CreateLatencyDatum(url, latency))
 			responseCodes = append(responseCodes, utils.CreateStatusDatum(url, respCode))
-			//results[url] = resp.StatusCode
 			mutex.Unlock()
-			//utils.PutStatusMetrics(url, currentUrlStatus.StatusCode)
-			//if currentUrlStatus.StatusCode == http.StatusOK {
-			//	utils.PutLatencyMetrics(url, currentUrlStatus.Latency)
-			//}
-			//urlsMap[url] = urlStatus
 		}(url)
 	}
 
 	wg.Wait()
 
-	//fmt.Println(urlsMap)
-	fmt.Println("done")
 	utils.PutMetric(latencies)
 	utils.PutMetric(responseCodes)
+	utils.PrintInfo("Done! Waiting for next run...")
 
 	// to json
 	resJson, err := json.Marshal(urlsMap)
