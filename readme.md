@@ -10,5 +10,5 @@ The following variables is required when building the image to push to ECR:
 | Name           | Description                                                                                                  |
 |----------------|--------------------------------------------------------------------------------------------------------------|
 | `AWS_ROLE_ARN` | This is the role to assume for the CICD pipeline to have permissions to push to ECR. This is a secret value. |
-| `PROJECT_NAME` | The project name as specifieid inside your infrastructure code                                               |
+| `PROJECT_NAME` | The project name as specified inside your infrastructure code                                                |
 
