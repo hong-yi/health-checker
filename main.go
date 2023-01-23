@@ -102,8 +102,8 @@ func getApiHealthTask() {
 
 	//fmt.Println(urlsMap)
 	fmt.Println("done")
-	sendDatums := append(responseCodes, latencies...)
-	utils.PutMetric(sendDatums)
+	utils.PutMetric(latencies)
+	utils.PutMetric(responseCodes)
 
 	// to json
 	resJson, err := json.Marshal(urlsMap)
