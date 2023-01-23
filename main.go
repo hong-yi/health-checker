@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
 	"log"
 	"net/http"
 	"os"
@@ -50,6 +51,9 @@ func main() {
 func getApiHealthTask() {
 	//waitChan := make(chan struct{}, MAX_CONCURRENT_JOBS)
 	//count := 0
+	latencies := []types.MetricDatum{}
+	responseCodes := []types.MetricDatum{}
+
 	inputFile, err := utils.DownloadFileFromS3(bucketName, inputFilename)
 
 	if err != nil {
@@ -82,6 +86,8 @@ func getApiHealthTask() {
 				Latency:    latency,
 			}
 			urlsMap[url] = currentUrlStatus
+			latencies = append(latencies, utils.CreateLatencyDatum(url, latency))
+			responseCodes = append(responseCodes, utils.CreateStatusDatum(url, respCode))
 			//results[url] = resp.StatusCode
 			mutex.Unlock()
 			//utils.PutStatusMetrics(url, currentUrlStatus.StatusCode)
@@ -96,6 +102,9 @@ func getApiHealthTask() {
 
 	//fmt.Println(urlsMap)
 	fmt.Println("done")
+	sendDatums := append(responseCodes, latencies...)
+	utils.PutMetric(sendDatums)
+
 	// to json
 	resJson, err := json.Marshal(urlsMap)
 	if err != nil {

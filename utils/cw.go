@@ -11,7 +11,7 @@ import (
 )
 
 // insert functions to write metrics to cloudwatch
-func PutLatencyMetrics(url string, latency int64) {
+func CreateLatencyDatum(url string, latency int64) types.MetricDatum {
 	metricToPut := types.MetricDatum{
 		MetricName: aws.String("website_latency"),
 		Dimensions: []types.Dimension{
@@ -25,11 +25,10 @@ func PutLatencyMetrics(url string, latency int64) {
 		Value:     aws.Float64(float64(latency)),
 	}
 
-	putMetric(metricToPut)
-
+	return metricToPut
 }
 
-func PutStatusMetrics(url string, statusCode int) {
+func CreateStatusDatum(url string, statusCode int) types.MetricDatum {
 	metricValue := 1
 	if statusCode != http.StatusOK {
 		metricValue = 0
@@ -46,13 +45,13 @@ func PutStatusMetrics(url string, statusCode int) {
 		Unit:      types.StandardUnitNone,
 		Value:     aws.Float64(float64(metricValue)),
 	}
-	putMetric(metricToPut)
+	return metricToPut
 }
 
-func putMetric(datum types.MetricDatum) {
+func PutMetric(datums []types.MetricDatum) {
 	client := cloudwatch.NewFromConfig(GetAwsCredentials())
 	_, err := client.PutMetricData(context.TODO(), &cloudwatch.PutMetricDataInput{
-		MetricData: []types.MetricDatum{datum},
+		MetricData: datums,
 		Namespace:  aws.String("health_stats"),
 	})
 	if err != nil {
