@@ -82,7 +82,7 @@ func getApiHealthTask() {
 			}
 			urlsMap[url] = currentUrlStatus
 			latencies = append(latencies, utils.CreateLatencyDatum(url, latency))
-			responseCodes = append(responseCodes, utils.CreateStatusDatum(url, respCode))
+			//responseCodes = append(responseCodes, utils.CreateStatusDatum(url, respCode))
 			mutex.Unlock()
 		}(url)
 	}

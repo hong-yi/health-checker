@@ -6,7 +6,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
-	"net/http"
 	"time"
 )
 
@@ -27,26 +26,26 @@ func CreateLatencyDatum(url string, latency int64) types.MetricDatum {
 	return metricToPut
 }
 
-func CreateStatusDatum(url string, statusCode int) types.MetricDatum {
-	metricValue := 1
-	if statusCode != http.StatusOK {
-		metricValue = 0
-	}
-	fmt.Println(metricValue)
-	metricToPut := types.MetricDatum{
-		MetricName: aws.String("website_status"),
-		Dimensions: []types.Dimension{
-			types.Dimension{
-				Name:  aws.String("url"),
-				Value: aws.String(url),
-			},
-		},
-		Timestamp: aws.Time(time.Now()),
-		Unit:      types.StandardUnitCount,
-		Value:     aws.Float64(float64(metricValue)),
-	}
-	return metricToPut
-}
+//func CreateStatusDatum(url string, statusCode int) types.MetricDatum {
+//	metricValue := 1
+//	if statusCode != http.StatusOK {
+//		metricValue = 0
+//	}
+//	fmt.Println(metricValue)
+//	metricToPut := types.MetricDatum{
+//		MetricName: aws.String("website_status"),
+//		Dimensions: []types.Dimension{
+//			types.Dimension{
+//				Name:  aws.String("url"),
+//				Value: aws.String(url),
+//			},
+//		},
+//		Timestamp: aws.Time(time.Now()),
+//		Unit:      types.StandardUnitCount,
+//		Value:     aws.Float64(float64(metricValue)),
+//	}
+//	return metricToPut
+//}
 
 func PutMetric(datums []types.MetricDatum) {
 	client := cloudwatch.NewFromConfig(GetAwsCredentials())
