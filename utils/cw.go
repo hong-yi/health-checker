@@ -24,7 +24,6 @@ func CreateLatencyDatum(url string, latency int64) types.MetricDatum {
 		Unit:      types.StandardUnitMilliseconds,
 		Value:     aws.Float64(float64(latency)),
 	}
-
 	return metricToPut
 }
 
@@ -33,6 +32,7 @@ func CreateStatusDatum(url string, statusCode int) types.MetricDatum {
 	if statusCode != http.StatusOK {
 		metricValue = 0
 	}
+	fmt.Println(metricValue)
 	metricToPut := types.MetricDatum{
 		MetricName: aws.String("website_status"),
 		Dimensions: []types.Dimension{
@@ -42,7 +42,7 @@ func CreateStatusDatum(url string, statusCode int) types.MetricDatum {
 			},
 		},
 		Timestamp: aws.Time(time.Now()),
-		Unit:      types.StandardUnitNone,
+		Unit:      types.StandardUnitCount,
 		Value:     aws.Float64(float64(metricValue)),
 	}
 	return metricToPut
